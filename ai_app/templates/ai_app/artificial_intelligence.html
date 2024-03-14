@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Talk with AI - Social Sphere{% endblock title %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'ai_app/css/style.css' %}">
+
+
+<div class="chatbot">
+    <header>
+        <h2>MyAI</h2>
+        <div>
+        <span class="call-btn material-symbols-outlined">call</span>
+        <span class="close-btn material-symbols-outlined">close</span>
+    </div>
+    </header>
+    <ul class="chatbox">
+        <li class="chat incoming">
+            <p>Hi there 🖐️ <br>How can I help you today?</p>
+        </li>
+
+        <li class="chat outgoing">
+            
+        </li>
+    </ul>
+    <div class="chat-input">
+        <form action="{% url 'ai' %}" method="POST">
+            {% csrf_token %}
+        <textarea placeholder="Enter a message..." name="prompt"></textarea>
+        <input type="submit" id="send-btn" class="material-symbols-outlined" value="send" />
+    </form>
+    </div>
+</div>
+
+<script src="{% static "ai_app/js/script.js" %}"></script>
+
+{% endblock content %}

@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Home Page - Social Sphere{% endblock title %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static "ai_app/css/style.css" %}">
+
+<!-- Header Section  -->
+<header>
+    <div class="tagline">
+        <h1>Connect. Communicate. Play.</h1>
+        <p>A platform to bring people together through real-time chatting, AI interactions, and multiplayer gaming.</p>
+    </div>
+</header>
+
+<!-- Feature Section  -->
+<hr>
+<section class="features">
+    <div class="feature">
+        <img src="{% static "ai_app/images/ai_app_logo.jpg" %}" alt="AI Icon">
+        <h2>AI Interaction</h2>
+        <p>Engage in conversations and audio calls with AI companions.</p>
+        <a href="{% url 'ai' %}" class="cta-button">Explore AI</a>
+    </div>
+    <div class="feature">
+        <img src="{% static "ai_app/images/chat_app_logo.jpg" %}" alt="Chat Icon">
+        <h2>Real-Time Chatting</h2>
+        <p>Stay connected with friends through instant messaging.</p>
+        <a href="chat-page" class="cta-button">Start Chatting</a>
+    </div>
+    <div class="feature">
+        <img src="{% static "ai_app/images/game_app_logo.jpg" %}" alt="Game Icon">
+        <h2>Multiplayer Gaming</h2>
+        <p>Play interactive games with friends in real-time.</p>
+        <a href="game-page" class="cta-button">Play Games</a>
+    </div>
+</section>
+
+<!-- AI Section -->
+
+
+{% endblock content %}
