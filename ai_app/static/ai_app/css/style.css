@@ -109,6 +109,44 @@ body {
     cursor: pointer;
     /* transform: translateY(-50%); */
   }
+
+  .audio-call {
+    background-image: url('../images/robot_phone_call.jpg');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+    filter: brightness(80%);
+    border-radius: 20px;
+    border: 2px solid var(--irisBlue);
+    width: 37%;
+    height: 840px;
+    position: absolute;
+    top: 47%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    opacity: 0; /*Initially hidden*/
+    visibility: hidden;
+    transition: opacity 0.5s ease-in-out;
+  }
+
+  .audio-call.show {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .audio-call img {
+    border-radius: 50%;
+    width: 500px;
+    position: absolute;
+    bottom: -30px;
+    left: 70px;
+  }
+  
+  .audio-call img:hover {
+    cursor: pointer;
+    opacity: 0.9;
+  }
+  
   
   .chatbot .chatbox {
     height: 750px;

@@ -21,6 +21,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'daphne',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -63,7 +64,8 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'SocialSphere.wsgi.application'
+# WSGI_APPLICATION = 'SocialSphere.wsgi.application'
+ASGI_APPLICATION = 'SocialSphere.asgi.application'
 
 # Make Django aware that I've modified its default User model
 AUTH_USER_MODEL = 'accounts.CustomUser'
@@ -131,3 +133,12 @@ STATICFILES_DIRS = [
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("localhost", 6379)],
+        },
+    },
+}

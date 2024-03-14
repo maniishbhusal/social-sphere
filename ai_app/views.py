@@ -5,6 +5,8 @@ from django.contrib.auth.decorators import login_required
 from .models import ChatConversation
 from django.contrib.auth import get_user_model
 from django.http import JsonResponse
+from asgiref.sync import async_to_sync
+from channels.layers import get_channel_layer
 from dotenv import load_dotenv
 
 from openai import OpenAI
@@ -15,6 +17,7 @@ from scipy.io.wavfile import write
 import wavio as wv
 import os
 from pygame import mixer
+import json
 
 User = get_user_model()
 
@@ -41,6 +44,8 @@ def index(request):
 def artificialIntelligenceView(request):
     if not request.user.is_authenticated:
         return redirect(reverse('user_login'))
+    
+    first_name = request.user.full_name.split()[0]
 
     # if request.method == 'POST':
     #     prompt = request.POST.get('prompt')
@@ -51,9 +56,10 @@ def artificialIntelligenceView(request):
 
         # return redirect(reverse('ai_app:ai_response', args=[prompt]))
 
-    return render(request, 'ai_app/artificial_intelligence.html')
+    return render(request, 'ai_app/artificial_intelligence.html', {'first_name': first_name})
 
 
+@login_required
 def recordAndRead(request):
 
     print("Message from client")
@@ -112,5 +118,17 @@ def recordAndRead(request):
     print("audio started playing...")
     mixer.music.play()
 
+    # Send JSON data to WebSocket clients
+    channel_layer = get_channel_layer()
+    async_to_sync(channel_layer.group_send)(
+        "chat_group", # group name
+        {
+            "type": "chat.message",
+            "text": json.dumps({"query": transcription_text, "response": chat_response}) # data to send to the client
+            # "text": json.dumps({"query": "Hello from consumer", "response": "Hi from consumer"}) # data to send to the client
+        }
+    )
+
     # Return an HTTP response with the transcription text
-    return JsonResponse({"query": transcription_text, "response": chat_response})
+    # return JsonResponse({"query": transcription_text, "response": chat_response})
+    return JsonResponse({"query": "Hello", "response": "Hi"})

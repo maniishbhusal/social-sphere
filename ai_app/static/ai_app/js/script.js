@@ -5,14 +5,52 @@ const sendChatBtn = document.querySelector(
 const chatbox = document.querySelector(".chatbox");
 const chatbotCloseBtn = document.querySelector(".close-btn");
 const callBtn = document.querySelector(".call-btn");
+const audioCallStart = document.querySelector(".audio-call");
+const endCallBtn = document.querySelector(".audio-call img");
 
-const API_KEY = "myopenaikey";
+const API_KEY = "sk-myapikey";
+
+// websocket
+
+// Create WebSocket connection.
+const socket = new WebSocket("ws://127.0.0.1:8000/ws/sc/");
+
+// Connection opened
+socket.addEventListener("open", (event) => {
+  console.log("WebSocket connection opened");
+  // socket.send("Hello Server!");
+});
+
+// Listen for messages
+socket.addEventListener("message", (event) => {
+  // Parse the received data
+  const data = JSON.parse(event.data);
+
+  // Use the data in your frontend logic
+  // For example, update the chatbox with the received message
+  chatbox.appendChild(createChatLi(data.query, "outgoing"));
+  chatbox.scrollTo(0, chatbox.scrollHeight);
+  chatbox.appendChild(createChatLi(data.response, "incoming"));
+  chatbox.scrollTo(0, chatbox.scrollHeight);
+});
+
+// Listen for close
+socket.addEventListener("close", (event) => {
+  console.log("WebSocket connection close: ", event);
+});
 
 const inputInitHeight = chatInput.scrollHeight;
 console.log(inputInitHeight); // height - 55, in our case
 
 // JavaScript code to send AJAX request
 callBtn.addEventListener("click", function () {
+  audioCallStart.classList.add("show");
+
+  // end call on button click
+  endCallBtn.addEventListener("click", () => {
+    audioCallStart.classList.remove("show");
+  });
+
   fetch("http://127.0.0.1:8000/recordAndRead/", {
     method: "POST",
     headers: {
@@ -28,19 +66,12 @@ callBtn.addEventListener("click", function () {
     })
     .then((data) => {
       console.log(data); // Handle the response data
-
-      // Append the user's userMessage to the chatbox
-      chatbox.appendChild(createChatLi(data.query, "outgoing"));
-      chatbox.scrollTo(0, chatbox.scrollHeight);
-
-      // Display chat response in the chatbox
-      chatbox.appendChild(createChatLi(data.response, "incoming"));
-      chatbox.scrollTo(0, chatbox.scrollHeight); // auto-scrolling the chat box
     })
     .catch((error) => {
       console.error("There was a problem with the fetch operation:", error);
     });
 });
+
 
 // Function to get CSRF token from cookie
 function getCookie(name) {
