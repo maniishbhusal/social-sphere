@@ -6,12 +6,57 @@ const chatbox = document.querySelector(".chatbox");
 const chatbotCloseBtn = document.querySelector(".close-btn");
 const callBtn = document.querySelector(".call-btn");
 
-const API_KEY = "myapikey";
-let userMessage;
+const API_KEY = "myopenaikey";
 
 const inputInitHeight = chatInput.scrollHeight;
 console.log(inputInitHeight); // height - 55, in our case
 
+// JavaScript code to send AJAX request
+callBtn.addEventListener("click", function () {
+  fetch("http://127.0.0.1:8000/recordAndRead/", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "X-CSRFToken": getCookie("csrftoken"), // Fetch CSRF token from cookie
+    },
+  })
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      return response.json();
+    })
+    .then((data) => {
+      console.log(data); // Handle the response data
+
+      // Append the user's userMessage to the chatbox
+      chatbox.appendChild(createChatLi(data.query, "outgoing"));
+      chatbox.scrollTo(0, chatbox.scrollHeight);
+
+      // Display chat response in the chatbox
+      chatbox.appendChild(createChatLi(data.response, "incoming"));
+      chatbox.scrollTo(0, chatbox.scrollHeight); // auto-scrolling the chat box
+    })
+    .catch((error) => {
+      console.error("There was a problem with the fetch operation:", error);
+    });
+});
+
+// Function to get CSRF token from cookie
+function getCookie(name) {
+  let cookieValue = null;
+  if (document.cookie && document.cookie !== "") {
+    const cookies = document.cookie.split(";");
+    for (let i = 0; i < cookies.length; i++) {
+      const cookie = cookies[i].trim();
+      if (cookie.startsWith(name + "=")) {
+        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+        break;
+      }
+    }
+  }
+  return cookieValue;
+}
 
 const createChatLi = (message, className) => {
   // Create a chat <li> element with passed Message and className
@@ -37,7 +82,12 @@ const generateResponse = (incomingChatLi) => {
       Authorization: `Bearer ${API_KEY}`,
     },
     body: JSON.stringify({
-      messages: [{ role: "system", content: userMessage }],
+      messages: [
+        {
+          role: "system",
+          content: userMessage,
+        },
+      ],
       model: "gpt-3.5-turbo",
     }),
   }).then((res) => {
